@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Etechnical</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9f9f9; }
+    header, footer { background: #333; color: #fff; text-align: center; padding: 1rem; }
+    .container { max-width: 1000px; margin: auto; padding: 20px; }
+    .products, .cart-items { display: flex; flex-wrap: wrap; gap: 20px; }
+    .product, .cart-item { background: #fff; padding: 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); width: 220px; }
+    .product img, .cart-item img { width: 100%; height: auto; }
+    .product h3, .cart-item h4 { margin: 10px 0; }
+    button { background: #28a745; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; margin-top: 10px; }
+    .cart, .checkout { background: #fff; padding: 20px; margin-top: 30px; border-radius: 5px; }
+    .checkout label { display: block; margin: 10px 0 5px; }
+    input[type="text"], select { width: 100%; padding: 8px; margin-bottom: 15px; }
+    #confirmation { display: none; background: #d4edda; padding: 20px; border-radius: 5px; color: #155724; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Etechnical</h1>
+  </header>
+
+  <div class="container">
+    <section class="products" id="product-list">
+      <!-- Product Cards -->
+    </section>
+
+    <section class="cart">
+      <h2>Your Cart</h2>
+      <div class="cart-items" id="cart-items">
+  <!-- Items will be injected here -->
+</div>    
+  <p><strong>Total: $<span id="total">0.00</span></strong></p>
+    </section>
+
+    <section class="checkout">
+  <h2>Checkout</h2>
+  <form id="checkout-form">
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" required>
+
+    <label for="address">Shipping Address:</label>
+    <input type="text" id="address" required>
+
+    <p><strong>Payment Method:</strong> Cash on Delivery</p>
+
+    <button type="submit">Place Order</button>
+  </form>
+
+  <div id="confirmation">
+    ✅ Thank you! Your order has been placed and will be paid via cash on delivery.
+  </div>
+</section>
+
+      <div id="confirmation">
+        ✅ Thank you! Your order has been placed successfully.
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Etechnical</p>
+  </footer>
+
+  <script>
+    const products = [
+      { name: 'Product 1', price: 30, image: 'https://hyperx.com/cdn/shop/files/hyperx_cloud_alpha_wireless_1_main.jpg?v=1753375840' },
+      { name: 'Product 2', price: 60, image: 'https://m.media-amazon.com/images/I/71fRP7KY9hL._AC_SL1500_.jpg' },
+      { name: 'Product 3', price: 10, image: 'https://dynaquestpc.com/cdn/shop/products/1_5c092b20-ed60-42db-b3fd-0f71a045cda3.png?v=1574238831&width=900' },
+  
+    ];
+
+    const cart = [];
+
+    const productList = document.getElementById("product-list");
+    const cartItems = document.getElementById("cart-items");
+    const totalDisplay = document.getElementById("total");
+
+    function renderProducts() {
+      products.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          <p>$${product.price.toFixed(2)}</p>
+          <button onclick="addToCart('${product.name}', ${product.price}, '${product.image}')">Add to Cart</button>
+        `;
+        productList.appendChild(div);
+      });
+    }
+
+    function addToCart(name, price, image) {
+  const existing = cart.find(item => item.name === name);
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ name, price, image, quantity: 1 });
+  }
+  updateCart();
+}
+
+function removeFromCart(name) {
+  const index = cart.findIndex(item => item.name === name);
+  if (index !== -1) {
+    cart.splice(index, 1);
+    updateCart();
+  }
+}
+
+function changeQuantity(name, newQty) {
+  const item = cart.find(item => item.name === name);
+  if (item) {
+    item.quantity = parseInt(newQty);
+    if (item.quantity <= 0) {
+      removeFromCart(name);
+    } else {
+      updateCart();
+    }
+  }
+}
+
+function updateCart() {
+  cartItems.innerHTML = "";
+  let total = 0;
+  cart.forEach(item => {
+    total += item.price * item.quantity;
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "cart-item";
+    itemDiv.innerHTML = `
+      <img src="${item.image}" alt="${item.name}">
+      <h4>${item.name}</h4>
+      <p>Price: $${item.price.toFixed(2)}</p>
+      <label>Qty: 
+        <input type="number" min="1" value="${item.quantity}" onchange="changeQuantity('${item.name}', this.value)" />
+      </label>
+      <p>Subtotal: $${(item.price * item.quantity).toFixed(2)}</p>
+      <button onclick="removeFromCart('${item.name}')">Remove</button>
+    `;
+    cartItems.appendChild(itemDiv);
+  });
+  totalDisplay.textContent = total.toFixed(2);
+}
+
+    document.getElementById("checkout-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+      // Simulate order placement
+      document.getElementById("confirmation").style.display = "block";
+      cart.length = 0;
+      updateCart();
+      this.reset();
+    });
+
+    renderProducts();
+  </script>
+
+</bodyMini E-Shop>
+</html>
